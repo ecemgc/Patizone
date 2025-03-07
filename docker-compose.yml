@@ -1,0 +1,30 @@
+version: "3.9"
+
+services:
+  postgres:
+    image: postgres:16.3-alpine
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_PASSWORD=1234
+      - POSTGRES_USER=patizone
+      - POSTGRES_DB=patizone
+  rabbitmq:
+    image: rabbitmq:3-management
+    hostname: rabbit
+    environment:
+      - RABBITMQ_ERLANG_COOKIE=SWQOKODSQALRPCLNMEQG
+      - RABBITMQ_DEFAULT_USER=rabbitmq
+      - RABBITMQ_DEFAULT_PASS=rabbitmq
+      - RABBITMQ_DEFAULT_VHOST=/
+    ports:
+      - "15672:15672"
+      - "5672:5672"
+
+  flyway:
+    image: flyway/flyway
+    command: -url=jdbc:postgresql://postgres:5432/patizone -schemas=public -user=patizone -password=1234 -connectRetries=60 -baselineOnMigrate=true migrate
+    volumes:
+      - ./sql:/flyway/sql
+    depends_on:
+      - postgres

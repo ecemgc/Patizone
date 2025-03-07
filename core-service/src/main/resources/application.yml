@@ -1,0 +1,32 @@
+server:
+  port: 8080
+
+spring:
+  sql:
+    init:
+      mode: always
+  application:
+    name: core-service
+  datasource:
+    url: jdbc:postgresql://localhost:5432/patizone
+    username: patizone
+    password: 1234
+    driverClassName: org.postgresql.Driver
+  jpa:
+    database: POSTGRESQL
+    show-sql: true
+    hibernate:
+      ddl-auto: none
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+
+  rabbitmq:
+    host: rabbitmq
+    port: 5672
+    username: rabbitmq
+    password: rabbitmq
+
+  flyway:
+    clean-disabled: false
+jwt:
+  expiration: 10
+  secret: patizone
