@@ -12,13 +12,16 @@ import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerCo
 @RequiredArgsConstructor
 public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 
-  //private final JwtAuthChannelInterceptor jwtAuthChannelInterceptor;
+  private final JwtHandshakeInterceptor jwtHandshakeInterceptor;
+  private final UserHandshakeHandler userHandshakeHandler;
 
   @Override
   public void registerStompEndpoints(StompEndpointRegistry registry) {
-    registry.addEndpoint("/ws") // WebSocket bağlantı noktası
-        .setAllowedOriginPatterns("*")
-        .withSockJS(); // Tarayıcı uyumluluğu için SockJS kullan
+    registry.addEndpoint("/ws")
+            .addInterceptors(jwtHandshakeInterceptor)
+            .setHandshakeHandler(userHandshakeHandler)
+            .setAllowedOriginPatterns("*")
+            .withSockJS(); // Tarayıcı uyumluluğu için SockJS kullan
   }
 
   @Override
@@ -26,11 +29,5 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
     registry.enableSimpleBroker("/queue", "/topic"); // Abone olunan yollar
     registry.setApplicationDestinationPrefixes("/app"); // Mesaj gönderme yolu
     registry.setUserDestinationPrefix("/user"); // Kullanıcı bazlı mesajlaşma için
-  }
-
-  @Override
-  public void configureClientInboundChannel(
-      org.springframework.messaging.simp.config.ChannelRegistration registration) {
-    // registration.interceptors(jwtAuthChannelInterceptor);
   }
 }

@@ -7,19 +7,22 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.messaging.handler.annotation.Header;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
+
+import java.security.Principal;
 
 @Controller
 @RequiredArgsConstructor
 public class ChatController {
 
-  private final MessageService messageService;
-  private final JwtUtils jwtUtils;
+  private final SimpMessagingTemplate messagingTemplate;
 
   @MessageMapping("/chat")
-  public void sendMessage(@Header("Authorization") String authHeader,
-      @Payload UserMessageDTO message) {
-    String senderEmail = jwtUtils.extractUsername(authHeader.substring(7));
-    messageService.sendMessage(senderEmail, message.getReceiverEmail(), message.getContent());
+  public void sendMessage(@Payload UserMessageDTO message, Principal principal) {
+    String senderEmail = principal.getName();
+    message.setSenderEmail(senderEmail);
+    messagingTemplate.convertAndSendToUser(
+            message.getReceiverEmail(), "/queue/messages", message);
   }
 }
