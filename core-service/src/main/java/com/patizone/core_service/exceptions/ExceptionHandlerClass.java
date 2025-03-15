@@ -30,6 +30,7 @@ public class ExceptionHandlerClass {
     }
 
     @ExceptionHandler(Exception.class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public  Map<String, String> handleGeneralException(Exception ex) {
         return new HashMap<>() {{
             put("errorMessage", ex.getMessage());
