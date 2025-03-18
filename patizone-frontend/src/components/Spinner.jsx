@@ -1,5 +1,5 @@
 import React from "react";
-import HashLoader from "react-spinners/HashLoader";
+import PacmanLoader from "react-spinners/PacmanLoader";
 
 export default function Spinner({
   active,
@@ -20,9 +20,9 @@ export default function Spinner({
       {active && (
         <div className="fixed inset-0 flex flex-col items-center justify-center z-50 backdrop-blur-xs bg-black bg-opacity-10">
           {Loader ? (
-            <Loader size={50} color="#000000" />
+            <Loader size={30} color="#000000" />
           ) : (
-            <HashLoader size={50} color="#000000" />
+            <PacmanLoader size={30} color="#000000" />
           )}
           <p className="mt-4 text-black text-lg font-semibold text-center">
             {text}

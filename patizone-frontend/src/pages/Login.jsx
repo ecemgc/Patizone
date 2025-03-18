@@ -25,6 +25,7 @@ function Login() {
 
   const { mutate } = useMutation({
     mutationFn: (request) => {
+      useAuthStore.setState({ isLoading: true });
       return AuthService.login(request);
     },
     onSuccess: (data) => {
@@ -55,7 +56,6 @@ function Login() {
 
   function handleLogin(data) {
     mutate(data);
-    useAuthStore.setState({ isLoading: true });
   }
 
   const schema = yup
