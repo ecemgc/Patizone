@@ -36,6 +36,11 @@ public class UserServiceImpl implements UserService {
     return userRepository.findByEmail(email);
   }
 
+  @Override
+  public Optional<User> findById(Long id) {
+    return userRepository.findById(id);
+  }
+
 
   //TODO: burası user değil ResponseUser dönmeli, chatgptde son konuşma bunun hakkında.
   @Override
@@ -90,7 +95,7 @@ public class UserServiceImpl implements UserService {
 
   //password update should be different from general info update
   @Override
-  public void update(Long id, RequestUpdateUser requestUpdateUser) {
+  public ResponseUser update(Long id, RequestUpdateUser requestUpdateUser) {
     User existingUser = userRepository.findById(id)
         .orElseThrow(() -> new BusinessException("User with id %s not found".formatted(id)));
 
@@ -101,7 +106,7 @@ public class UserServiceImpl implements UserService {
     }
 
     userMapper.updateUserFromRequest(requestUpdateUser, existingUser);
-    userRepository.save(existingUser);
+    return userMapper.toResponseUser(userRepository.save(existingUser));
   }
 
 }

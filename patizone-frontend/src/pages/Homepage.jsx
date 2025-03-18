@@ -5,7 +5,7 @@ import AdList from "../components/ad/AdList";
 function Homepage() {
   return (
     <div>
-      <AdList adList={[123, 345,324,459,678,789,678]} />
+      <AdList adList={[123, 345, 324, 459, 678, 789, 678]} />
     </div>
   );
 }

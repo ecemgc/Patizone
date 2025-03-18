@@ -28,6 +28,31 @@ export default [
         "warn",
         { allowConstantExport: true },
       ],
+
+      // **Gereksiz importları kaldır**
+      "unused-imports/no-unused-imports": "warn",
+
+      // **Kullanılmayan değişkenleri kaldır (ama `rest` operatörünü hariç tut)**
+      "unused-imports/no-unused-vars": [
+        "warn",
+        { vars: "all", args: "after-used", ignoreRestSiblings: true },
+      ],
+
+      // **Import sırasını düzenle**
+      "import/order": [
+        "warn",
+        {
+          groups: [
+            "builtin",
+            "external",
+            "internal",
+            "parent",
+            "sibling",
+            "index",
+          ],
+          alphabetize: { order: "asc", caseInsensitive: true },
+        },
+      ],
     },
   },
 ];

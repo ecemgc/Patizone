@@ -1,6 +1,10 @@
 server:
   port: 8080
 
+imgur:
+  clientId: 950dac5a03a9b70
+  secretKey: ceedb7feb4c0709da54f2f640e22febda05ab4fb
+
 spring:
   sql:
     init:
@@ -30,3 +34,7 @@ spring:
 jwt:
   expiration: 10
   secret: patizone
+
+logging:
+  level:
+    org.springframework.cloud.openfeign.FeignClient: DEBUG

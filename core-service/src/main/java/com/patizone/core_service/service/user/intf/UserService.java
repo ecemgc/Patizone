@@ -14,6 +14,8 @@ public interface UserService {
 
   Optional<User> findByEmail(String email);
 
+  Optional<User> findById(Long id);
+
   User save(RequestSignUp requestSignUp);
 
   void deleteAccount(Long id);
@@ -24,5 +26,5 @@ public interface UserService {
 
   List<ResponseUser> getAll();
 
-  void update(Long id, RequestUpdateUser requestUpdateUser);
+  ResponseUser update(Long id, RequestUpdateUser requestUpdateUser);
 }

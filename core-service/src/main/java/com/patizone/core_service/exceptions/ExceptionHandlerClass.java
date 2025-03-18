@@ -21,6 +21,15 @@ public class ExceptionHandlerClass {
         }};
     }
 
+    @ExceptionHandler(NotFoundException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public Map<String, String> handleNotFoundException(NotFoundException exception) {
+        return new HashMap<>() {{
+            put("errorMessage", exception.getMessage());
+        }};
+    }
+
+
     @ExceptionHandler(SQLException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public  Map<String, String> handleDataIntegrityViolationException(SQLException ex) {
@@ -36,5 +45,7 @@ public class ExceptionHandlerClass {
             put("errorMessage", ex.getMessage());
         }};
     }
+
+
 
 }

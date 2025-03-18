@@ -9,13 +9,47 @@ import {
   MDBCard,
   MDBCardBody,
   MDBInput,
-  MDBCheckbox,
   MDBIcon,
 } from "mdb-react-ui-kit";
+import { useMutation } from "@tanstack/react-query";
+import AuthService from "../services/AuthService";
+import Spinner from "../components/Spinner";
+import { Controller, useForm } from "react-hook-form";
+import * as yup from "yup";
+import { yupResolver } from "@hookform/resolvers/yup";
+import FormError from "../components/FormError";
+import { toast } from "react-toastify";
+
+const phoneRegExp =
+  /^((\\+[1-9]{1,4}[ \\-]*)|(\\([0-9]{2,3}\\)[ \\-]*)|([0-9]{2,4})[ \\-]*)*?[0-9]{3,4}?[ \\-]*[0-9]{3,4}?$/;
 
 function Register() {
-  const { user } = useAuthStore(); // Kullanıcı oturum durumu
+  const { user, isLoading, setAuth } = useAuthStore(); // Kullanıcı oturum durumu
   const navigate = useNavigate();
+
+  const { mutate } = useMutation({
+    mutationFn: (request) => {
+      return AuthService.register(request);
+    },
+    onSuccess: (data) => {
+      toast.success("Register Success");
+      const user = {
+        token: data.token,
+        id: data.user.id,
+        firstName: data.user.firstName,
+        lastName: data.user.lastName,
+        email: data.user.email,
+        imageUrl: data.user.imageUrl,
+      };
+      setAuth(user);
+    },
+    onError: (error) => {
+      toast.error("Register Fail", error.message);
+    },
+    onSettled: () => {
+      useAuthStore.setState({ isLoading: false });
+    },
+  });
 
   useEffect(() => {
     if (user) {
@@ -23,123 +57,180 @@ function Register() {
     }
   }, [user, navigate]);
 
+  const schema = yup
+    .object({
+      email: yup.string().email().min(8).max(100).required(),
+      password: yup.string().min(3).max(100).required(),
+      firstName: yup.string().min(3).max(100).required(),
+      lastName: yup.string().min(3).max(100).required(),
+      phone: yup.string().matches(phoneRegExp, "Phone number is not valid"),
+    })
+    .required();
+
+  const {
+    register,
+    control,
+    handleSubmit,
+    formState: { errors },
+  } = useForm({ resolver: yupResolver(schema) });
+
+  function handleRegister(data) {
+    mutate(data);
+  }
+
   return (
-    <MDBContainer fluid className="p-4">
-      <MDBRow>
-        <MDBCol
-          md="6"
-          className="text-center text-md-start d-flex flex-column justify-content-center"
-        >
-          <h1 className="my-5 display-3 fw-bold ls-tight px-3">
-            The best offer <br />
-            <span className="text-primary">for your business</span>
-          </h1>
+    <Spinner active={isLoading}>
+      <MDBContainer fluid className="p-4">
+        <MDBRow>
+          <MDBCol
+            md="6"
+            className="text-center text-md-start d-flex flex-column justify-content-center"
+          >
+            <h1 className="my-5 display-3 fw-bold ls-tight px-3">
+              The best offer <br />
+              <span className="text-primary">for your business</span>
+            </h1>
 
-          <p className="px-3" style={{ color: "hsl(217, 10%, 50.8%)" }}>
-            Lorem ipsum dolor sit amet consectetur adipisicing elit. Eveniet,
-            itaque accusantium odio, soluta, corrupti aliquam quibusdam tempora
-            at cupiditate quis eum maiores libero veritatis? Dicta facilis sint
-            aliquid ipsum atque?
-          </p>
-        </MDBCol>
+            <p className="px-3" style={{ color: "hsl(217, 10%, 50.8%)" }}>
+              Lorem ipsum dolor sit amet consectetur adipisicing elit. Eveniet,
+              itaque accusantium odio, soluta, corrupti aliquam quibusdam
+              tempora at cupiditate quis eum maiores libero veritatis? Dicta
+              facilis sint aliquid ipsum atque?
+            </p>
+          </MDBCol>
 
-        <MDBCol md="6">
-          <MDBCard className="my-5">
-            <MDBCardBody className="p-5">
-              <MDBRow>
-                <MDBCol col="6">
-                  <MDBInput
-                    wrapperClass="mb-4"
-                    label="First name"
-                    id="form1"
-                    type="text"
+          <MDBCol md="6">
+            <MDBCard className="my-5">
+              <MDBCardBody className="p-5">
+                <form onSubmit={handleSubmit(handleRegister)}>
+                  <FormError errors={errors} name="firstName" />
+                  <Controller
+                    name="firstName"
+                    {...register("firstName")}
+                    control={control}
+                    render={({ field }) => (
+                      <MDBInput
+                        {...field}
+                        wrapperClass="mb-4"
+                        label="First Name"
+                        id="firstName"
+                      />
+                    )}
                   />
-                </MDBCol>
-
-                <MDBCol col="6">
-                  <MDBInput
-                    wrapperClass="mb-4"
-                    label="Last name"
-                    id="form1"
-                    type="text"
+                  <FormError errors={errors} name="lastName" />
+                  <Controller
+                    name="lastName"
+                    {...register("lastName")}
+                    control={control}
+                    render={({ field }) => (
+                      <MDBInput
+                        {...field}
+                        wrapperClass="mb-4"
+                        label="Last Name"
+                        id="lastName"
+                      />
+                    )}
                   />
-                </MDBCol>
-              </MDBRow>
 
-              <MDBInput
-                wrapperClass="mb-4"
-                label="Email"
-                id="form1"
-                type="email"
-              />
-              <MDBInput
-                wrapperClass="mb-4"
-                label="Password"
-                id="form1"
-                type="password"
-              />
+                  <FormError errors={errors} name="email" />
+                  <Controller
+                    name="email"
+                    {...register("email")}
+                    control={control}
+                    render={({ field }) => (
+                      <MDBInput
+                        {...field}
+                        wrapperClass="mb-4"
+                        label="Email"
+                        id="email"
+                      />
+                    )}
+                  />
 
-              <div className="d-flex justify-content-center mb-4">
-                <MDBCheckbox
-                  name="flexCheck"
-                  value=""
-                  id="flexCheckDefault"
-                  label="Subscribe to our newsletter"
-                />
-              </div>
+                  <FormError errors={errors} name="password" />
+                  <Controller
+                    name="password"
+                    {...register("password")}
+                    control={control}
+                    render={({ field }) => (
+                      <MDBInput
+                        {...field}
+                        wrapperClass="mb-4"
+                        label="Password"
+                        id="password"
+                        type="password"
+                      />
+                    )}
+                  />
 
-              <MDBBtn className="w-100 mb-4" size="md">
-                sign up
-              </MDBBtn>
+                  <Controller
+                    name="phone"
+                    {...register("phone")}
+                    control={control}
+                    render={({ field }) => (
+                      <MDBInput
+                        {...field}
+                        wrapperClass="mb-4"
+                        label="Phone Number"
+                        id="phone"
+                      />
+                    )}
+                  />
 
-              <p className="text-center">
-                Do you have an account? <Link to="/login">Sign in</Link>
-              </p>
+                  <MDBBtn className="w-100 mb-4" size="md" type="submit">
+                    sign in
+                  </MDBBtn>
+                </form>
 
-              <div className="text-center">
-                <p>or sign up with:</p>
+                <p className="text-center">
+                  Do you have an account? <Link to="/login">Sign in</Link>
+                </p>
 
-                <MDBBtn
-                  tag="a"
-                  color="none"
-                  className="mx-3"
-                  style={{ color: "#1266f1" }}
-                >
-                  <MDBIcon fab icon="facebook-f" size="sm" />
-                </MDBBtn>
+                <div className="text-center">
+                  <p>or sign up with:</p>
 
-                <MDBBtn
-                  tag="a"
-                  color="none"
-                  className="mx-3"
-                  style={{ color: "#1266f1" }}
-                >
-                  <MDBIcon fab icon="twitter" size="sm" />
-                </MDBBtn>
+                  <MDBBtn
+                    tag="a"
+                    color="none"
+                    className="mx-3"
+                    style={{ color: "#1266f1" }}
+                  >
+                    <MDBIcon fab icon="facebook-f" size="sm" />
+                  </MDBBtn>
 
-                <MDBBtn
-                  tag="a"
-                  color="none"
-                  className="mx-3"
-                  style={{ color: "#1266f1" }}
-                >
-                  <MDBIcon fab icon="google" size="sm" />
-                </MDBBtn>
+                  <MDBBtn
+                    tag="a"
+                    color="none"
+                    className="mx-3"
+                    style={{ color: "#1266f1" }}
+                  >
+                    <MDBIcon fab icon="twitter" size="sm" />
+                  </MDBBtn>
 
-                <MDBBtn
-                  tag="a"
-                  color="none"
-                  className="mx-3"
-                  style={{ color: "#1266f1" }}
-                >
-                  <MDBIcon fab icon="github" size="sm" />
-                </MDBBtn>
-              </div>
-            </MDBCardBody>
-          </MDBCard>
-        </MDBCol>
-      </MDBRow>
-    </MDBContainer>
+                  <MDBBtn
+                    tag="a"
+                    color="none"
+                    className="mx-3"
+                    style={{ color: "#1266f1" }}
+                  >
+                    <MDBIcon fab icon="google" size="sm" />
+                  </MDBBtn>
+
+                  <MDBBtn
+                    tag="a"
+                    color="none"
+                    className="mx-3"
+                    style={{ color: "#1266f1" }}
+                  >
+                    <MDBIcon fab icon="github" size="sm" />
+                  </MDBBtn>
+                </div>
+              </MDBCardBody>
+            </MDBCard>
+          </MDBCol>
+        </MDBRow>
+      </MDBContainer>
+    </Spinner>
   );
 }
 
