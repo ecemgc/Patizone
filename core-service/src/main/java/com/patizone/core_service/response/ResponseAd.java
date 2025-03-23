@@ -14,7 +14,7 @@ public class ResponseAd {
 
   private Long id;
   private String title;
-  private User owner;
+  private ResponseUser owner;
   private String address;
   private String description;
   private String animalType;

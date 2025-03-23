@@ -41,7 +41,7 @@ function Login() {
       setAuth(user); // Kullanıcıyı ve token'ı Zustand'a kaydet
     },
     onError: (error) => {
-      toast.error('Login Fail', error.message);
+      toast.error('Login Fail: ' + error.message);
     },
     onSettled: () => {
       useAuthStore.setState({ isLoading: false });

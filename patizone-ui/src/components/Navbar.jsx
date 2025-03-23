@@ -1,13 +1,18 @@
 import { Menu, MenuButton, MenuItem, MenuItems, Transition } from '@headlessui/react';
 import {
   ArrowRightOnRectangleIcon,
+  ChatBubbleLeftEllipsisIcon,
   ChevronDownIcon,
   Cog6ToothIcon,
+  MegaphoneIcon,
   UserIcon
 } from '@heroicons/react/24/outline';
 import { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import { useAuthStore } from '../store/useAuthStore';
 
-const ProfileDropdown = ({ imageUrl }) => {
+const ProfileDropdown = ({ imageUrl, logout }) => {
+  const navigate = useNavigate();
   const [isOpen, setIsOpen] = useState(false);
 
   return (
@@ -55,6 +60,10 @@ const ProfileDropdown = ({ imageUrl }) => {
             <MenuItem>
               {({ active }) => (
                 <button
+                  onClick={() => {
+                    logout();
+                    navigate('/login');
+                  }}
                   className={`${
                     active ? 'bg-red-100 text-red-600' : 'text-gray-700'
                   } flex w-full items-center px-4 py-2`}>
@@ -69,11 +78,32 @@ const ProfileDropdown = ({ imageUrl }) => {
   );
 };
 
-const Navbar = ({ imageUrl }) => {
+const Navbar = () => {
+  const navigate = useNavigate();
+
+  const { user, logout } = useAuthStore();
   return (
-    <nav className="sticky top-0 w-full bg-white shadow-md py-3 px-6 flex justify-between items-center z-50">
-      <div className="text-xl font-semibold text-gray-800">Patizone</div>
-      <ProfileDropdown imageUrl={imageUrl} />
+    <nav className="fixed top-0 w-full bg-white shadow-md py-3 px-6 flex justify-between items-center z-50 h-16">
+      <div
+        className="text-xl font-semibold text-gray-800 hover:text-blue-600"
+        onClick={() => navigate('/')}>
+        Patizone
+      </div>
+
+      {/* Orta kısım: Menü Linkleri */}
+      <div className="flex space-x-6 text-gray-800 font-medium">
+        <Link to="/ad" className="flex items-center space-x-2 hover:text-blue-600">
+          <MegaphoneIcon className="w-5 h-5" />
+          <span>Create Ad</span>
+        </Link>
+        <Link to="/messages" className="flex items-center space-x-2 hover:text-blue-600">
+          <ChatBubbleLeftEllipsisIcon className="w-5 h-5" />
+          <span>Messages</span>
+        </Link>
+      </div>
+
+      {/* Sağ taraf: Profil DropDown */}
+      <ProfileDropdown imageUrl={user?.imageUrl} logout={logout} />
     </nav>
   );
 };

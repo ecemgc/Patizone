@@ -3,15 +3,21 @@ package com.patizone.core_service.service.user.impl;
 import com.patizone.core_service.entity.User;
 import com.patizone.core_service.exceptions.BusinessException;
 import com.patizone.core_service.mapper.UserMapper;
+import com.patizone.core_service.messaging.SessionRegistryService;
 import com.patizone.core_service.repository.UserRepository;
+import com.patizone.core_service.request.RequestGetUsers;
 import com.patizone.core_service.request.RequestSignUp;
 import com.patizone.core_service.request.RequestUpdateUser;
 import com.patizone.core_service.response.ResponsePage;
 import com.patizone.core_service.response.ResponseUser;
 import com.patizone.core_service.service.auth.intf.AuthenticatedUserService;
 import com.patizone.core_service.service.user.intf.UserService;
+
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -30,6 +36,7 @@ public class UserServiceImpl implements UserService {
   private final UserMapper userMapper;
   private final PasswordEncoder passwordEncoder;
   private final AuthenticatedUserService authenticatedUserService;
+  private final SessionRegistryService registryService;
 
   @Override
   public Optional<User> findByEmail(String email) {
@@ -90,7 +97,25 @@ public class UserServiceImpl implements UserService {
 
   @Override
   public List<ResponseUser> getAll() {
-    return userMapper.toResponseUser(userRepository.findAll());
+    List<User> users = userRepository.findAll(Sort.by("firstName"));
+
+    // Get online users
+    Set<String> onlineEmails = registryService.getOnlineUsersByEmail();
+
+    // sort by online status. then, name and last name
+    List<User> sorted = users.stream()
+            .sorted(
+                    Comparator.comparing((User u) -> !onlineEmails.contains(u.getEmail()))
+                            .thenComparing(User::getFirstName)
+                            .thenComparing(User::getLastName)
+            )
+            .toList();
+
+   var responseUsers =  userMapper.toResponseUser(sorted);
+
+   // set online status
+   responseUsers.forEach(user -> user.setOnline(onlineEmails.contains(user.getEmail())));
+   return responseUsers;
   }
 
   //password update should be different from general info update

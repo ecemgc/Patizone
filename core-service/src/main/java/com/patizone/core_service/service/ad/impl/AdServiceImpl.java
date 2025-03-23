@@ -1,10 +1,12 @@
 package com.patizone.core_service.service.ad.impl;
 
 import com.patizone.core_service.entity.Ad;
+import com.patizone.core_service.entity.AdType;
 import com.patizone.core_service.entity.User;
 import com.patizone.core_service.exceptions.BusinessException;
 import com.patizone.core_service.mapper.AdMapper;
 import com.patizone.core_service.repository.AdRepository;
+import com.patizone.core_service.repository.AdTypeRepository;
 import com.patizone.core_service.repository.UserRepository;
 import com.patizone.core_service.request.RequestCreateAd;
 import com.patizone.core_service.request.RequestUpdateAd;
@@ -29,10 +31,11 @@ public class AdServiceImpl implements AdService {
   private final AdMapper mapper;
   private final AuthenticatedUserService authenticatedUserService;
   private final UserRepository userRepository;
+  private final AdTypeRepository adTypeRepository;
 
   @Override
   public void save(RequestCreateAd request) {
-    repository.save(mapper.toEntity(request));
+    repository.save(mapper.toEntity(request.setOwner(authenticatedUserService.getCurrentUser())));
   }
 
   @Override
@@ -134,5 +137,10 @@ public class AdServiceImpl implements AdService {
   public ResponsePage<ResponseAd> getAllByAuthUser(int page, int size, String sortBy,
       Direction direction) {
     return getAllByUser(authenticatedUserService.getCurrentUserId(), page, size, sortBy, direction);
+  }
+
+  @Override
+  public List<AdType> getAdTypes() {
+    return adTypeRepository.findAll();
   }
 }

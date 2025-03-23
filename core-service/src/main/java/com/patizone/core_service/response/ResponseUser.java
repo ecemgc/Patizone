@@ -1,6 +1,7 @@
 package com.patizone.core_service.response;
 
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -20,4 +21,6 @@ public class ResponseUser {
     private String imageUrl;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
+    @JsonProperty("isOnline")
+    private boolean isOnline;
 }

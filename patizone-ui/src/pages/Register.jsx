@@ -44,7 +44,7 @@ function Register() {
       setAuth(user);
     },
     onError: (error) => {
-      toast.error('Register Fail', error.message);
+      toast.error('Register Fail: ' + error.message);
     },
     onSettled: () => {
       useAuthStore.setState({ isLoading: false });
@@ -63,7 +63,8 @@ function Register() {
       password: yup.string().min(3).max(100).required(),
       firstName: yup.string().min(3).max(100).required(),
       lastName: yup.string().min(3).max(100).required(),
-      phone: yup.string().matches(phoneRegExp, 'Phone number is not valid')
+      phone: yup.string().matches(phoneRegExp, 'Phone number is not valid'),
+      address: yup.string().required()
     })
     .required();
 
@@ -152,6 +153,16 @@ function Register() {
                     control={control}
                     render={({ field }) => (
                       <MDBInput {...field} wrapperClass="mb-4" label="Phone Number" id="phone" />
+                    )}
+                  />
+
+                  <FormError errors={errors} name="address" />
+                  <Controller
+                    name="address"
+                    {...register('address')}
+                    control={control}
+                    render={({ field }) => (
+                      <MDBInput {...field} wrapperClass="mb-4" label="Address" id="address" />
                     )}
                   />
 

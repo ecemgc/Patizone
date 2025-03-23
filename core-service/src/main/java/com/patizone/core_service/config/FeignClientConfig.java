@@ -13,13 +13,6 @@ import feign.Client;
 
 @Configuration
 public class FeignClientConfig {
-
-    private final ObjectFactory<HttpMessageConverters> messageConverters;
-
-    public FeignClientConfig(ObjectFactory<HttpMessageConverters> messageConverters) {
-        this.messageConverters = messageConverters;
-    }
-
     @Bean
     public Encoder feignFormEncoder() {
         return new SpringFormEncoder(new FormEncoder());

@@ -20,4 +20,7 @@ public class AdType {
 
     @Column(unique = true, nullable = false)
     private String name;
+
+    @Column(name = "text")
+    private String text;
 }

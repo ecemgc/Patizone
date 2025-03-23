@@ -52,7 +52,7 @@ public class Ad {
   @Column(name = "animal_age")
   private Integer animalAge;
 
-  @Column(name = "image_url", nullable = false)
+  @Column(name = "image_url")
   private String imageUrl;
 
   //start date of the ad

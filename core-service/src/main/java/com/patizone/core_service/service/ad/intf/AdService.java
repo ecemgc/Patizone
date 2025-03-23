@@ -1,5 +1,6 @@
 package com.patizone.core_service.service.ad.intf;
 
+import com.patizone.core_service.entity.AdType;
 import com.patizone.core_service.request.RequestCreateAd;
 import com.patizone.core_service.request.RequestUpdateAd;
 import com.patizone.core_service.response.ResponseAd;
@@ -32,5 +33,7 @@ public interface AdService {
 
   ResponsePage<ResponseAd> getAllByAuthUser(int page, int size, String sortBy,
       Sort.Direction direction);
+
+  List<AdType> getAdTypes();
 
 }

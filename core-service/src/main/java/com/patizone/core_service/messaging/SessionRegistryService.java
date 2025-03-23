@@ -1,6 +1,8 @@
 package com.patizone.core_service.messaging;
 
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
@@ -14,11 +16,15 @@ public class SessionRegistryService {
     userSessionMap.put(email, sessionId);
   }
 
-
   public void removeUser(String email) {
     if(!StringUtils.hasText(email)) {
       return;
     }
     userSessionMap.remove(email);
   }
+
+  public Set<String> getOnlineUsersByEmail() {
+    return userSessionMap.keySet();
+  }
+
 }

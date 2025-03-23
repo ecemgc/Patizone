@@ -1,6 +1,7 @@
 package com.patizone.core_service.service.user.intf;
 
 import com.patizone.core_service.entity.User;
+import com.patizone.core_service.request.RequestGetUsers;
 import com.patizone.core_service.request.RequestSignUp;
 import com.patizone.core_service.request.RequestUpdateUser;
 import com.patizone.core_service.response.ResponsePage;
