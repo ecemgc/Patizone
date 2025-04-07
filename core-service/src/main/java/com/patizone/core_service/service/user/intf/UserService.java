@@ -1,6 +1,7 @@
 package com.patizone.core_service.service.user.intf;
 
 import com.patizone.core_service.entity.User;
+import com.patizone.core_service.request.RequestGetUsers;
 import com.patizone.core_service.request.RequestSignUp;
 import com.patizone.core_service.request.RequestUpdateUser;
 import com.patizone.core_service.response.ResponsePage;
@@ -14,6 +15,8 @@ public interface UserService {
 
   Optional<User> findByEmail(String email);
 
+  Optional<User> findById(Long id);
+
   User save(RequestSignUp requestSignUp);
 
   void deleteAccount(Long id);
@@ -24,5 +27,5 @@ public interface UserService {
 
   List<ResponseUser> getAll();
 
-  void update(Long id, RequestUpdateUser requestUpdateUser);
+  ResponseUser update(Long id, RequestUpdateUser requestUpdateUser);
 }

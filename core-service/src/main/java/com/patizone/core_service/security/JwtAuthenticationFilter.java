@@ -31,6 +31,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
       throws ServletException, IOException {
     // tokenı request headerdan aldık.
     String token = jwtUtils.getToken(request);
+
     if (!StringUtils.hasText(token)) {
       //token yok ise auth olamayacak sıradaki filtera gönderdik.
       filterChain.doFilter(request, response);

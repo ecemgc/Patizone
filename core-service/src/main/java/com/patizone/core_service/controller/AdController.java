@@ -1,5 +1,6 @@
 package com.patizone.core_service.controller;
 
+import com.patizone.core_service.entity.AdType;
 import com.patizone.core_service.request.RequestCreateAd;
 import com.patizone.core_service.request.RequestPage;
 import com.patizone.core_service.request.RequestUpdateAd;
@@ -46,7 +47,7 @@ public class AdController {
 
   @GetMapping("/paginated")
   @ResponseStatus(HttpStatus.OK)
-  public ResponsePage<ResponseAd> getAll(@RequestBody RequestPage requestPage) {
+  public ResponsePage<ResponseAd> getAll(RequestPage requestPage) {
     return adService.getAll(requestPage.getPage(), requestPage.getPageSize(),
         requestPage.getSortBy(), requestPage.getDirection());
   }
@@ -73,8 +74,7 @@ public class AdController {
 
   @GetMapping("/user/{userId}/paginated")
   @ResponseStatus(HttpStatus.OK)
-  public ResponsePage<ResponseAd> getAllByUser(@PathVariable Long userId,
-      @RequestBody RequestPage requestPage) {
+  public ResponsePage<ResponseAd> getAllByUser(@PathVariable Long userId, RequestPage requestPage) {
     return adService.getAllByUser(userId, requestPage.getPage(), requestPage.getPageSize(),
         requestPage.getSortBy(), requestPage.getDirection());
   }
@@ -86,8 +86,12 @@ public class AdController {
   }
 
   @GetMapping("/authUser/paginated")
-  public ResponsePage<ResponseAd> getAllByAuthUser(@RequestBody RequestPage requestPage) {
+  public ResponsePage<ResponseAd> getAllByAuthUser(RequestPage requestPage) {
     return adService.getAllByAuthUser(requestPage.getPage(), requestPage.getPageSize(),
         requestPage.getSortBy(), requestPage.getDirection());
+  }
+  @GetMapping("/types")
+  public List<AdType> getAdTypes() {
+    return adService.getAdTypes();
   }
 }
